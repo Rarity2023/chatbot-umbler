@@ -1,17 +1,16 @@
 import express from "express";
 import dotenv from "dotenv";
-import { Configuration, OpenAIApi } from "openai";
+import OpenAI from "openai";
 
 dotenv.config();
 
 const app = express();
 app.use(express.json());
 
-const openai = new OpenAIApi(
-  new Configuration({
-    apiKey: process.env.OPENAI_API_KEY,
-  })
-);
+// Nova forma de instanciar a API do OpenAI
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+});
 
 app.post("/", async (req, res) => {
   const mensagem = req.body?.Payload?.Content?.Text;
@@ -21,12 +20,12 @@ app.post("/", async (req, res) => {
   }
 
   try {
-    const resposta = await openai.createChatCompletion({
+    const resposta = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       messages: [{ role: "user", content: mensagem }],
     });
 
-    const texto = resposta.data.choices[0].message.content;
+    const texto = resposta.choices[0].message.content;
 
     return res.json({ reply: texto });
   } catch (err) {
