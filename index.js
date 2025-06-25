@@ -11,7 +11,6 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Aqui está ouvindo a rota correta "/"
 app.post("/", async (req, res) => {
   const mensagem = req.body?.Payload?.Content?.Text;
 
@@ -27,14 +26,20 @@ app.post("/", async (req, res) => {
 
     const texto = resposta.choices[0].message.content;
 
-    return res.json({ reply: texto });
+    // Formato que a Umbler espera:
+    return res.json({
+      replies: [
+        {
+          type: "text",
+          content: texto,
+        },
+      ],
+    });
   } catch (err) {
     console.error("Erro ao chamar OpenAI:", err.message);
     return res.status(500).send("Erro ao processar");
   }
 });
 
-const PORT = process.env.PORT || 10000;
-app.listen(PORT, () => {
-  console.log("Servidor rodando na porta", PORT);
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log("Servidor rodando na porta", PORT));
