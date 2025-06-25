@@ -7,12 +7,13 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Nova forma de instanciar a API do OpenAI
+// Instância da API do OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-app.post("/", async (req, res) => {
+// Rota para o webhook da Umbler
+app.post("/webhook", async (req, res) => {
   const mensagem = req.body?.Payload?.Content?.Text;
 
   if (!mensagem) {
@@ -32,6 +33,11 @@ app.post("/", async (req, res) => {
     console.error("Erro ao chamar OpenAI:", err.message);
     return res.status(500).send("Erro ao processar");
   }
+});
+
+// Rota GET simples para testar se o servidor está online
+app.get("/", (req, res) => {
+  res.send("Servidor do chatbot está online!");
 });
 
 const PORT = process.env.PORT || 3000;
