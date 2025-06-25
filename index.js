@@ -7,13 +7,12 @@ dotenv.config();
 const app = express();
 app.use(express.json());
 
-// Instância da API do OpenAI
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-// Rota para o webhook da Umbler
-app.post("/webhook", async (req, res) => {
+// Aqui está ouvindo a rota correta "/"
+app.post("/", async (req, res) => {
   const mensagem = req.body?.Payload?.Content?.Text;
 
   if (!mensagem) {
@@ -35,10 +34,7 @@ app.post("/webhook", async (req, res) => {
   }
 });
 
-// Rota GET simples para testar se o servidor está online
-app.get("/", (req, res) => {
-  res.send("Servidor do chatbot está online!");
+const PORT = process.env.PORT || 10000;
+app.listen(PORT, () => {
+  console.log("Servidor rodando na porta", PORT);
 });
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log("Servidor rodando na porta", PORT));
